@@ -1,128 +1,160 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
+import os
 
-# C extensions
-*.so
+gitignore_content = """
+# Built application files
+*.apk
+*.ap_
 
-# Distribution / packaging
-.Python
+# Files for the ART/Dalvik VM
+*.dex
+
+# Java class files
+*.class
+
+# Generated files
+gen/
+out/
+
+# Gradle files
+.gradle/
 build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
 
-# PyInstaller
-#  Usually these files are written by a PyInstaller script; adding them
-#  to your project gitignore is not strictly necessary.
-# *.spec
+# Local configuration file (sdk path, etc)
+local.properties
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+# AVD/emulator files
+.android/avd/
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
+# Android Studio files
+.idea/workspace.xml
+.idea/libraries/
+.idea/modules.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/gradle.xml
+.idea/tasks.xml
+.idea/vcs.xml
+.idea/dictionaries
 
-# Translations
-*.mo
-*.pot
-*.po
+# Mac specific files
+.DS_Store
+# Windows specific files
+Thumbs.db
 
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
+# Crashlytics files
+crashlytics-build.properties
 
-# Flask stuff:
-instance/
-.webassets-cache
+# Keystore files
+*.keystore
 
-# Scrapy stuff:
-.scrapy
+# External native build files
+.externalNativeBuild/
 
-# Sphinx documentation
-docs/_build/
+# Kotlin stubs
+*.klib
 
-# PyBuilder
-target/
+# Room schema files
+*.json
 
-# Jupyter Notebook
-.ipynb_checkpoints
+# Gradle wrapper
+!gradlew
+!gradlew.bat
+.gradle-wrapper
 
-# IPython
-profile_default/
-ipython_config.py
+# Git LFS files
+*.lfs
 
-# PEP 582; __pypackages__
-__pypackages__/
+# Android Studio build configuration
+.idea/compiler.xml
 
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
+# Android Studio local build configuration
+.idea/runConfigurations.xml
 
-# SageMath parsed files
-*.sage.py
+# Android Studio caches
+.idea/caches/
 
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
+# Android Studio generated files
+.idea/generated/
 
-# Spyder project settings
-.spyderproject
-.spyproject
+# Android Studio test results
+.idea/testResults/
 
-# Rope project settings
-.ropeproject
+# Android Studio UI designer files
+.idea/uiDesigner.xml
 
-# mkdocs documentation
-/site
+# Android Studio local history
+.idea/shelf/
 
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
+# Android Studio inspection profiles
+.idea/inspectionProfiles/
 
-# Pyre type checker
-.pyre/
+# Android Studio copyright profiles
+.idea/copyright/
 
-# VSCode
-.vscode/
+# Android Studio code style profiles
+.idea/codeStyles/
 
-# Archivos específicos de los agentes o de este proyecto generador
-agent_data/
-projects_workspaces/ # Si los agentes clonan sub-repos aquí localmente, no en el repo compartido
-config_*.json # Si están en el mismo nivel que el .git del repo compartido
-tasks.db.json # Si el task manager usa un archivo en el repo compartido
+# Android Studio external libraries
+.idea/libraries/
+
+# Android Studio user dictionaries
+.idea/dictionaries/
+
+# Android Studio task files
+.idea/tasks.xml
+
+# Android Studio vcs configuration
+.idea/vcs.xml
+
+# Android Studio gradle configuration
+.idea/gradle.xml
+
+# Android Studio asset wizard settings
+.idea/assetWizardSettings.xml
+
+# Android Studio navigation editor settings
+.idea/navEditor.xml
+
+# Android Studio gitignore
+.idea/gitignore
+
+# Android Studio build configuration (Kotlin)
+.idea/kotlinc.xml
+
+# Android Studio external annotations
+.idea/external_annotations.xml
+
+# Android Studio data sources
+.idea/dataSources/
+
+# Android Studio deployment configurations
+.idea/deploymentTargetDropDown.xml
+
+# Android Studio device manager configurations
+.idea/device_manager_settings.xml
+
+# Android Studio profiler settings
+.idea/profiler/
+
+# Android Studio template data
+.idea/templateData/
+
+# Android Studio version control history
+.idea/workspace.xml
+
+# Android Studio build-specific files
+captures/
+"""
+
+def generate_android_gitignore():
+    """Generates a standard .gitignore file for an Android project."""
+    file_path = ".gitignore"
+    try:
+        with open(file_path, "w") as f:
+            f.write(gitignore_content)
+        print(f"Generated standard Android .gitignore file at {file_path}")
+    except IOError as e:
+        print(f"Error writing .gitignore file: {e}")
+
+if __name__ == "__main__":
+    generate_android_gitignore()
