@@ -1,0 +1,44 @@
+import xml.etree.ElementTree as ET
+from xml.dom import minidom
+
+def create_nutritional_layout_xml():
+    root = ET.Element("LinearLayout")
+    root.set("xmlns:android", "http://schemas.android.com/apk/res/android")
+    root.set("xmlns:app", "http://schemas.android.com/apk/res-auto")
+    root.set("xmlns:tools", "http://schemas.android.com/tools")
+    root.set("android:layout_width", "match_parent")
+    root.set("android:layout_height", "match_parent")
+    root.set("android:orientation", "vertical")
+    root.set("android:padding", "16dp")
+    root.set("tools:context", ".ResultFragment")
+
+    tv_food_name = ET.SubElement(root, "TextView")
+    tv_food_name.set("android:id", "@+id/text_view_food_name")
+    tv_food_name.set("android:layout_width", "match_parent")
+    tv_food_name.set("android:layout_height", "wrap_content")
+    tv_food_name.set("android:textAppearance", "@style/TextAppearance.AppCompat.Large")
+    tv_food_name.set("android:textStyle", "bold")
+    tv_food_name.set("android:gravity", "center_horizontal")
+    tv_food_name.set("tools:text", "Food Item Name")
+    tv_food_name.set("android:layout_marginBottom", "16dp")
+
+    tv_section_title = ET.SubElement(root, "TextView")
+    tv_section_title.set("android:id", "@+id/text_view_section_title")
+    tv_section_title.set("android:layout_width", "match_parent")
+    tv_section_title.set("android:layout_height", "wrap_content")
+    tv_section_title.set("android:textAppearance", "@style/TextAppearance.AppCompat.Medium")
+    tv_section_title.set("android:text", "Nutritional Facts (per serving):")
+    tv_section_title.set("android:layout_marginBottom", "8dp")
+
+    rv_nutrients = ET.SubElement(root, "androidx.recyclerview.widget.RecyclerView")
+    rv_nutrients.set("android:id", "@+id/recycler_view_nutrients")
+    rv_nutrients.set("android:layout_width", "match_parent")
+    rv_nutrients.set("android:layout_height", "0dp")
+    rv_nutrients.set("android:layout_weight", "1")
+    rv_nutrients.set("tools:listitem", "@layout/list_item_nutrient")
+
+    xml_string = ET.tostring(root, encoding='utf-8')
+    dom = minidom.parseString(xml_string)
+    pretty_xml_string = dom.toprettyxml(indent="    ")
+
+    return pretty_xml_string
