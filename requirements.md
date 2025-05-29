@@ -1,36 +1,48 @@
 import os
 
-markdown_content = """# Requisitos de la Aplicación: Contador de Pasos Simple
+def generate_documentation(filename="documentation.md"):
+    """
+    Genera un archivo de documentación en formato Markdown para el proyecto 'calories'.
+    """
+    documentation_content = """# Proyecto Calories - Alcance Inicial y Requisitos
 
-Este documento describe los requisitos iniciales para una aplicación simple de conteo de pasos para Android.
+Este documento define el alcance inicial y los requisitos para la primera versión del proyecto 'calories'.
 
-## 1. Funcionalidades Clave
+## 1. Funcionalidades Mínimas Viables (MVP)
 
-*   **Conteo de Pasos:** Implementar un algoritmo para el conteo preciso de pasos utilizando los sensores de movimiento del dispositivo (principalmente acelerómetro; giroscopio podría usarse para refinamiento si es necesario).
-*   **Visualización en Tiempo Real:** Mostrar el conteo actual de pasos en la interfaz de usuario principal, actualizándose en tiempo real a medida que el usuario camina.
-*   **Historial Diario:** Registrar el conteo total de pasos al final de cada día y permitir al usuario visualizar un historial de sus pasos diarios (ej. los últimos 7 o 30 días).
-*   **Meta Diaria:** Permitir al usuario establecer una meta de pasos diaria y mostrar visualmente el progreso hacia esa meta.
-*   **Interfaz de Usuario:** Diseñar una interfaz de usuario limpia, intuitiva y fácil de navegar, enfocada en la funcionalidad principal de conteo de pasos.
+El MVP del proyecto 'calories' se centrará en las siguientes características esenciales:
 
-## 2. Público Objetivo
+*   **Escaneo de Productos:** Permitir al usuario escanear un producto utilizando un método soportado.
+*   **Visualización de Datos Nutricionales:** Mostrar la información nutricional clave del producto escaneado.
+*   **Base de Datos Local (Inicial):** Almacenar una base de datos limitada de productos y su información nutricional para las pruebas iniciales. (Nota: Una versión futura podría integrar APIs externas).
 
-*   Usuarios de dispositivos Android que buscan una herramienta básica y fiable para rastrear su actividad física diaria a través del conteo de pasos.
-*   Personas que prefieren una aplicación gratuita, sin anuncios intrusivos (si es posible en futuras iteraciones) y sin funcionalidades complejas como redes sociales, planes de entrenamiento personalizados o gamificación avanzada.
+## 2. Tipos de Escaneo Soportados (MVP)
 
-## 3. Limitaciones Técnicas Iniciales
+Para el MVP, el proyecto soportará el siguiente tipo de escaneo:
 
-*   **Dependencia de Sensores:** La precisión del conteo de pasos dependerá directamente de la disponibilidad, calidad y calibración de los sensores de movimiento en el dispositivo del usuario.
-*   **Consumo de Batería:** La implementación debe optimizarse para minimizar el consumo de batería, ya que el seguimiento de pasos requiere el uso continuo de sensores.
-*   **Compatibilidad:** La versión inicial se centrará en la compatibilidad con versiones recientes de Android (ej. Android 8.0 Oreo o superior), aunque se buscará la mayor compatibilidad posible sin comprometer la estabilidad o el consumo de batería.
-*   **Sin Integración Externa:** En esta fase inicial, no se incluirá integración con servicios externos como Google Fit, plataformas de salud de fabricantes de dispositivos, ni APIs de terceros.
-*   **Variabilidad del Conteo:** El conteo de pasos puede variar ligeramente entre dispositivos y dependiendo de cómo el usuario lleve el teléfono (bolsillo, mano, bolso). La aplicación debe manejar estas variaciones lo mejor posible, pero se reconoce que la precisión perfecta es un desafío.
+*   **Escaneo de Códigos de Barras (Barcode):** Utilizar la cámara del dispositivo (o un escáner simulado) para leer códigos de barras estándar (como EAN-13, UPC-A).
+
+## 3. Datos Nutricionales Clave
+
+Para cada producto escaneado, el MVP deberá mostrar la siguiente información nutricional clave:
+
+*   **Calorías:** Energía total por porción o por 100g/ml.
+*   **Grasas Totales:** Cantidad total de grasas.
+*   **Grasas Saturadas:** Cantidad de grasas saturadas.
+*   **Carbohidratos Totales:** Cantidad total de carbohidratos.
+*   **Azúcares:** Cantidad de azúcares simples.
+*   **Proteínas:** Cantidad de proteínas.
+*   **Sal (o Sodio):** Cantidad de sal o sodio.
+*   **Tamaño de la Porción:** Información sobre el tamaño de la porción utilizada para los valores nutricionales.
+
 """
 
-file_path = "requirements.md"
+    try:
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(documentation_content)
+        print(f"Archivo de documentación '{filename}' generado exitosamente.")
+    except IOError as e:
+        print(f"Error al escribir el archivo {filename}: {e}")
 
-try:
-    with open(file_path, "w", encoding="utf-8") as f:
-        f.write(markdown_content)
-    # print(f"Documento '{file_path}' creado exitosamente.") # Optional: for confirmation
-except IOError as e:
-    print(f"Error al escribir el archivo {file_path}: {e}")
+if __name__ == "__main__":
+    generate_documentation()
