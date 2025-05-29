@@ -1,57 +1,141 @@
 import os
 
-def generate_research_summary():
+def generate_step_counting_report():
     """
-    Generates a markdown file summarizing research on Android step counting methods.
+    Generates a Markdown report summarizing Android step counting methods.
+
+    Returns:
+        str: The Markdown formatted report.
     """
-    filename = "research_summary.md"
+    report_title = "# Informe sobre Métodos de Conteo de Pasos en Android\n\n"
+    introduction = "Este informe resume los hallazgos de la investigación sobre diferentes métodos para contar pasos en dispositivos Android, comparando sus características y ofreciendo una recomendación.\n\n"
 
-    content = f"""
-# Resumen de Investigación: Métodos de Conteo de Pasos en Android
+    methods_data = {
+        "Acelerómetro Nativo (Manual Implementation)": {
+            "description": "Implementación manual de un algoritmo de detección de pasos utilizando datos crudos del sensor acelerómetro del dispositivo.",
+            "pros": [
+                "Control total sobre el algoritmo.",
+                "No requiere dependencias externas (fuera de los sensores del sistema)."
+            ],
+            "cons": [
+                "Alta complejidad de implementación (requiere desarrollar o integrar un algoritmo robusto).",
+                "Precisión variable, depende mucho de la calidad del algoritmo y la calibración.",
+                "Consumo de energía potencialmente alto si no se maneja correctamente (uso constante del sensor).",
+                "Sensible a falsos positivos (movimientos no relacionados con caminar)."
+            ],
+            "complexity": "Alta",
+            "energy": "Potencialmente Alta",
+            "precision": "Variable (depende del algoritmo)",
+            "permissions": "android.permission.ACTIVITY_RECOGNITION (para versiones recientes de Android, aunque a veces se puede evitar si solo se usa el sensor sin intención de reconocer actividad)."
+        },
+        "Google Fit API - History API": {
+            "description": "Utiliza datos agregados de actividad física (incluido el conteo de pasos) que Google Fit ya ha recolectado en el dispositivo.",
+            "pros": [
+                "Muy eficiente energéticamente (Google Fit maneja la recolección en segundo plano).",
+                "Relativamente sencilla de implementar para obtener datos históricos.",
+                "Precisión generalmente buena, ya que se basa en la infraestructura optimizada de Google Fit.",
+                "Acceso a datos históricos (pasos contados previamente por Google Fit)."
+            ],
+            "cons": [
+                "Dependencia de la aplicación Google Fit instalada y configurada en el dispositivo.",
+                "Los datos pueden no estar disponibles en tiempo real (hay un pequeño retraso en la agregación).",
+                "Requiere autenticación con la cuenta de Google del usuario.",
+                "Puede haber discrepancias si el usuario usa múltiples dispositivos o si Google Fit no está activo."
+            ],
+            "complexity": "Media",
+            "energy": "Baja (delega a Google Fit)",
+            "precision": "Buena (gestionada por Google Fit)",
+            "permissions": "Com.google.android.gms.permission.ACTIVITY_RECOGNITION (obtenido a través de la integración con Google Fit), requiere consentimiento del usuario para acceder a los datos de actividad física."
+        },
+        "Google Fit API - Recording API": {
+            "description": "Permite a la aplicación registrar la intención de recibir datos de actividad física (como pasos) de Google Fit de forma continua en segundo plano.",
+            "pros": [
+                "Eficiente energéticamente (Google Fit gestiona la recolección).",
+                "Permite a la aplicación recibir actualizaciones continuas de pasos sin mantener el sensor activo directamente.",
+                "Menos susceptible a ser 'matada' por el sistema operativo que un servicio propio usando sensores directos."
+            ],
+            "cons": [
+                "Dependencia de Google Fit.",
+                "Requiere autenticación.",
+                "Los datos se entregan a Google Fit primero y luego a tu aplicación, no es tiempo real estricto.",
+                "Requiere que la aplicación se registre para tipos de datos específicos."
+            ],
+            "complexity": "Media",
+            "energy": "Baja (delega a Google Fit)",
+            "precision": "Buena (gestionada por Google Fit)",
+            "permissions": "Com.google.android.gms.permission.ACTIVITY_RECOGNITION, consentimiento del usuario."
+        },
+        "Google Fit API - Sensors API": {
+            "description": "Permite a la aplicación acceder a los datos de los sensores de actividad física (incluido el sensor de conteo de pasos hardware si está disponible) a través de Google Fit.",
+            "pros": [
+                "Acceso a datos casi en tiempo real del sensor de pasos (si existe hardware dedicado).",
+                "Utiliza el sensor de conteo de pasos del hardware (TYPE_STEP_COUNTER) que es muy eficiente energéticamente.",
+                "Google Fit maneja parte de la complejidad de interactuar con los sensores del sistema."
+            ],
+            "cons": [
+                "Dependencia de Google Fit.",
+                "Requiere autenticación.",
+                "La disponibilidad del sensor de conteo de pasos hardware varía entre dispositivos.",
+                "Requiere manejar el flujo de datos del sensor directamente (aunque facilitado por Google Fit)."
+            ],
+            "complexity": "Media a Baja (si el sensor hardware está disponible)",
+            "energy": "Muy Baja (si usa TYPE_STEP_COUNTER hardware)",
+            "precision": "Alta (si usa TYPE_STEP_COUNTER hardware)",
+            "permissions": "Com.google.android.gms.permission.ACTIVITY_RECOGNITION, consentimiento del usuario."
+        }
+    }
 
-## Introducción
+    report_content = report_title + introduction
 
-Este documento resume la investigación sobre los métodos comunes para contar pasos en dispositivos Android, comparando el uso directo del acelerómetro con APIs de alto nivel como Google Fit. El objetivo es evaluar la viabilidad y el rendimiento de cada enfoque para un proyecto de conteo de pasos.
+    report_content += "## Métodos Investigados\n\n"
 
-## Comparación de Métodos
+    for method, details in methods_data.items():
+        report_content += f"### {method}\n\n"
+        report_content += f"**Descripción:** {details['description']}\n\n"
+        report_content += "**Pros:**\n"
+        for pro in details["pros"]:
+            report_content += f"- {pro}\n"
+        report_content += "\n"
+        report_content += "**Contras:**\n"
+        for con in details["cons"]:
+            report_content += f"- {con}\n"
+        report_content += "\n"
+        report_content += f"**Complejidad de Implementación:** {details['complexity']}\n"
+        report_content += f"**Eficiencia Energética:** {details['energy']}\n"
+        report_content += f"**Precisión:** {details['precision']}\n"
+        report_content += f"**Permisos Necesarios:** {details['permissions']}\n\n"
+        report_content += "---\n\n" # Separator
 
-Se han analizado dos enfoques principales:
+    report_content += "## Comparación\n\n"
+    report_content += "| Característica          | Acelerómetro Nativo | Google Fit - History | Google Fit - Recording | Google Fit - Sensors |\n"
+    report_content += "|-------------------------|---------------------|----------------------|------------------------|----------------------|\n"
+    for characteristic in ["Complejidad de Implementación", "Eficiencia Energética", "Precisión", "Permisos Necesarios"]:
+         report_content += f"| {characteristic} | {methods_data['Acelerómetro Nativo (Manual Implementation)'][characteristic.split(' ')[0].lower() if characteristic != 'Permisos Necesarios' else 'permissions']} | {methods_data['Google Fit API - History API'][characteristic.split(' ')[0].lower() if characteristic != 'Permisos Necesarios' else 'permissions']} | {methods_data['Google Fit API - Recording API'][characteristic.split(' ')[0].lower() if characteristic != 'Permisos Necesarios' else 'permissions']} | {methods_data['Google Fit API - Sensors API'][characteristic.split(' ')[0].lower() if characteristic != 'Permisos Necesarios' else 'permissions']} |\n"
 
-1.  **Uso Directo del Acelerómetro:** Implementación de algoritmos para detectar patrones de pasos a partir de los datos crudos del sensor acelerómetro.
-2.  **Uso de APIs de Alto Nivel (e.g., Google Fit API):** Utilización de servicios del sistema operativo o APIs de terceros que ya gestionan el conteo de pasos, a menudo fusionando datos de varios sensores (acelerómetro, giroscopio, magnetómetro) y optimizando el consumo de batería.
+    report_content += "\n"
 
-### Criterios de Comparación
+    report_content += "## Recomendación\n\n"
+    report_content += "Para la mayoría de las aplicaciones de conteo de pasos en Android, el enfoque **Google Fit API** es generalmente el más recomendado, específicamente utilizando una combinación de **Sensors API** y **History API**.\n\n"
+    report_content += "**Justificación:**\n"
+    report_content += "- **Eficiencia Energética:** Utilizar la infraestructura de Google Fit, especialmente el acceso al sensor de conteo de pasos hardware (TYPE_STEP_COUNTER) a través de la Sensors API, es significativamente más eficiente en términos de batería que procesar datos crudos del acelerómetro manualmente.\n"
+    report_content += "- **Precisión:** Google Fit utiliza algoritmos optimizados y puede acceder a sensores de hardware dedicados, lo que generalmente resulta en un conteo de pasos más preciso y menos propenso a falsos positivos que una implementación manual simple.\n"
+    report_content += "- **Complejidad de Implementación:** Aunque requiere integrar la API de Google Fit y manejar la autenticación, es menos complejo que desarrollar y mantener un algoritmo de detección de pasos robusto desde cero.\n"
+    report_content += "- **Datos Históricos:** La History API permite acceder fácilmente a los pasos contados por Google Fit incluso cuando la aplicación no estaba activa, proporcionando una experiencia de usuario más completa.\n\n"
+    report_content += "La **Sensors API** es ideal para obtener actualizaciones en tiempo real (o casi real) cuando la aplicación está en primer plano o necesita monitoreo activo. La **History API** es crucial para mostrar resúmenes diarios, semanales, etc., y para recuperar datos si la aplicación se cerró.\n\n"
+    report_content += "La implementación manual del acelerómetro solo se consideraría en casos muy específicos donde la dependencia de Google Fit es inaceptable o se requiere un control extremadamente granular sobre el procesamiento del sensor, asumiendo la inversión significativa en desarrollo y pruebas necesarias para lograr precisión y eficiencia aceptables.\n\n"
 
-| Criterio              | Uso Directo del Acelerómetro                     | Uso de APIs de Alto Nivel (Google Fit API)                                  |
-| :-------------------- | :----------------------------------------------- | :-------------------------------------------------------------------------- |
-| **Precisión**         | Variable, depende de la calidad del algoritmo y calibración. Puede ser sensible a la posición del teléfono y a la actividad. | Generalmente alta y consistente. Beneficia de algoritmos sofisticados y fusión de sensores optimizada por el fabricante/Google. |
-| **Consumo de Batería**| Potencialmente alto si se muestrea a alta frecuencia continuamente. Requiere manejo cuidadoso de wakelocks y modos de bajo consumo. | Generalmente optimizado. Las APIs del sistema y Google Fit están diseñadas para ser eficientes, a menudo usando sensores de bajo consumo y procesamiento en segundo plano gestionado por el sistema. |
-| **Complejidad de Implementación** | Alta. Requiere conocimiento de procesamiento de señales, diseño de algoritmos de detección de picos/patrones, filtrado, y manejo del ciclo de vida del sensor en Android. | Baja a Moderada. Implica integrar SDKs, manejar permisos, autenticación (para Google Fit), y procesar datos agregados proporcionados por la API. La lógica de conteo es responsabilidad de la API. |
-| **Dependencias**      | Solo requiere acceso al sensor acelerómetro del dispositivo. | Requiere la disponibilidad de los Google Play Services en el dispositivo (para Google Fit) o APIs del sistema operativo específicas de la versión de Android. |
-
-## Discusión Adicional
-
-*   **Privacidad:** El uso directo del acelerómetro procesa datos localmente. Google Fit implica compartir datos de actividad con Google, aunque con el consentimiento del usuario.
-*   **Historial de Datos:** Google Fit proporciona acceso a datos históricos de pasos sincronizados en la cuenta del usuario. La implementación con acelerómetro requeriría gestionar el almacenamiento y la sincronización de datos localmente.
-*   **Compatibilidad:** Las APIs de alto nivel pueden variar ligeramente entre versiones de Android o fabricantes, pero Google Fit ofrece una capa de abstracción más consistente si está disponible. La implementación con acelerómetro es universal, pero su rendimiento depende del dispositivo y la calidad del sensor.
-
-## Conclusión y Recomendación para el Proyecto 'pasos'
-
-Considerando la precisión, el consumo de batería y la complejidad de implementación, la **Google Fit API (o APIs de conteo de pasos del sistema Android)** representa la opción más recomendable para el proyecto 'pasos'.
-
-Aunque el uso directo del acelerómetro ofrece un control total y evita dependencias externas (más allá del propio sensor), la implementación de un algoritmo robusto y eficiente en consumo de batería es significativamente más compleja y propensa a variaciones de precisión entre dispositivos.
-
-Las APIs de alto nivel como Google Fit ya han resuelto muchos de estos desafíos. Proporcionan un conteo de pasos fiable, están optimizadas para el consumo de energía por el sistema operativo y/o Google, y simplifican enormemente el desarrollo al abstraer la lógica compleja de procesamiento de sensores. La dependencia de Google Play Services es una limitación potencial, pero es aceptable para la mayoría de los dispositivos Android modernos dirigidos al mercado general.
-
-Por lo tanto, se recomienda utilizar la Google Fit API o las APIs nativas de conteo de pasos de Android (como el Sensor.TYPE_STEP_COUNTER o Sensor.TYPE_STEP_DETECTOR) para el proyecto 'pasos' debido a su **mayor precisión, menor consumo de batería y menor complejidad de implementación**.
-"""
-
-    try:
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(content.strip())
-        print(f"Archivo '{filename}' generado exitosamente.")
-    except IOError as e:
-        print(f"Error al escribir el archivo '{filename}': {e}")
+    return report_content
 
 if __name__ == "__main__":
-    generate_research_summary()
+    report_markdown = generate_step_counting_report()
+
+    # Specify the output file name
+    output_filename = "informe_conteo_pasos_android.md"
+
+    # Save the report to a Markdown file
+    try:
+        with open(output_filename, "w", encoding="utf-8") as f:
+            f.write(report_markdown)
+        print(f"Informe generado exitosamente en '{output_filename}'")
+    except IOError as e:
+        print(f"Error al escribir el archivo '{output_filename}': {e}")
