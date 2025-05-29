@@ -1,67 +1,94 @@
 import os
 
-# Define the content of the Markdown file
-markdown_content = """
-# Resumen de Investigación: Tecnologías de Escaneo para Android
+def generate_research_summary():
+    """
+    Generates the research_summary.md file with information about nutritional data sources.
+    """
 
-## Introducción
+    content = """
+# Resumen de Investigación: Fuentes de Datos Nutricionales
 
-Este documento presenta un resumen de la investigación realizada sobre diversas tecnologías disponibles para implementar funcionalidades de escaneo (códigos de barras, códigos QR) en aplicaciones Android. El objetivo es comparar las opciones más relevantes, identificar sus características clave y proporcionar recomendaciones para la selección de una solución adecuada basada en criterios como la facilidad de integración y el rendimiento.
+Este documento resume las posibles fuentes de datos nutricionales investigadas para el proyecto 'calories', que tiene como objetivo ayudar a los usuarios a rastrear su ingesta calórica y nutricional.
 
-## Tecnologías Investigadas
+## Fuentes de Datos Potenciales
 
-Durante la investigación, se analizaron principalmente las siguientes tecnologías:
+### 1. USDA FoodData Central (FDC)
 
-### 1. Google ML Kit Barcode Scanning API
--   **Descripción:** Parte del kit de aprendizaje automático de Google, ofrece APIs pre-entrenadas para diversas tareas, incluyendo el escaneo de códigos de barras y QR.
--   **Características:** Soporta múltiples formatos de códigos, detección en tiempo real, procesamiento en dispositivo o en la nube.
+*   **Descripción:** Base de datos completa del Departamento de Agricultura de los Estados Unidos (USDA). Contiene información detallada sobre la composición nutricional de una amplia gama de alimentos, incluyendo datos de investigación, datos de la industria y datos de encuestas.
+*   **Pros:**
+    *   Amplia cobertura de alimentos, incluyendo alimentos básicos, productos de marca y alimentos consumidos en encuestas nacionales.
+    *   Datos detallados y de alta calidad, a menudo con información sobre métodos de análisis y fuentes.
+    *   Es una fuente gubernamental oficial, considerada fiable.
+    *   Acceso público y gratuito.
+*   **Contras:**
+    *   El formato de los datos puede ser complejo (varias tablas relacionadas) y requiere un procesamiento significativo para su uso en una aplicación.
+    *   La API puede tener limitaciones o ser menos intuitiva que otras APIs comerciales.
+    *   Principalmente enfocado en alimentos de EE. UU., aunque incluye muchos alimentos comunes globalmente.
 
-### 2. ZXing (Zebra Crossing)
--   **Descripción:** Una popular biblioteca de código abierto implementada en Java (con puertos a otros lenguajes) para procesar códigos de barras 1D/2D.
--   **Características:** Amplio soporte de formatos, altamente configurable, base de código madura y probada.
+### 2. Open Food Facts (OFF)
 
-### 3. Otras Bibliotecas (Ej: Scandit, Dynamsoft)
--   **Descripción:** Soluciones comerciales o con modelos de licencia específicos, a menudo enfocadas en rendimiento optimizado y características avanzadas para casos de uso empresarial o industrial.
--   **Características:** Alto rendimiento, características avanzadas (escaneo múltiple, AR), soporte dedicado (generalmente).
+*   **Descripción:** Base de datos colaborativa y abierta de productos alimenticios de todo el mundo. Los datos son aportados por voluntarios y provienen principalmente de la información nutricional y listas de ingredientes en los envases de los productos.
+*   **Pros:**
+    *   Gran cantidad de productos de marca (envasados) de muchos países.
+    *   Datos accesibles a través de una API RESTful relativamente sencilla.
+    *   Proyecto de código abierto y comunidad activa.
+    *   Incluye información adicional como ingredientes, alérgenos, etiquetas y eco-score.
+*   **Contras:**
+    *   La calidad y completitud de los datos pueden variar significativamente entre productos y países, ya que dependen de las contribuciones de los usuarios.
+    *   Menos detalle sobre la composición de alimentos básicos o ingredientes puros en comparación con bases de datos de investigación como USDA FDC.
+    *   Puede haber duplicados o errores en los datos.
 
-## Comparación
+### 3. Edamam Nutrition Analysis API
 
-| Característica          | Google ML Kit Barcode Scanning API | ZXing                        | Otras Bibliotecas (Comerciales) |
-| :---------------------- | :--------------------------------- | :--------------------------- | :------------------------------ |
-| **Facilidad de Integración** | Alta (SDKs oficiales, bien documentado) | Media (Necesita envoltorio/adaptación para Android UI) | Varía (Generalmente alta, con SDKs dedicados) |
-| **Rendimiento**         | Muy Alto (Optimizado por Google)   | Alto (Depende de la implementación) | Muy Alto (Optimizado comercialmente) |
-| **Formatos Soportados** | Amplio                             | Muy Amplio                   | Muy Amplio                      |
-| **Costo**               | Gratuito (con límites en la nube, si aplica) | Gratuito (Open Source)       | Pago (Licencias)                |
-| **Personalización**     | Limitada a opciones de la API      | Alta                         | Varía                           |
-| **Actualizaciones**     | Frecuentes (Parte del ecosistema Google) | Depende de la comunidad      | Frecuentes (Soporte comercial)  |
+*   **Descripción:** Servicio comercial que proporciona análisis nutricional de recetas o textos de ingredientes, así como búsqueda de alimentos y productos.
+*   **Pros:**
+    *   API potente y fácil de usar para analizar texto libre (ej. "1 manzana grande", "300g pechuga de pollo").
+    *   Puede manejar recetas complejas.
+    *   Datos agregados de múltiples fuentes subyacentes.
+*   **Contras:**
+    *   Es un servicio de pago con un plan gratuito limitado (número de llamadas por mes).
+    *   Dependencia de un servicio externo y sus posibles cambios en precios o políticas.
+    *   Puede ser menos transparente sobre la fuente exacta de los datos para cada alimento.
 
-## Recomendaciones
+### 4. FatSecret Platform API
 
-Basándonos en la facilidad de integración y el rendimiento para una aplicación Android general:
+*   **Descripción:** API comercial que ofrece acceso a una base de datos de alimentos, incluyendo alimentos genéricos, productos de marca y elementos de restaurantes.
+*   **Pros:**
+    *   Amplia base de datos que incluye productos de marca y restaurantes, relevante para el consumo diario.
+    *   API diseñada específicamente para aplicaciones de seguimiento nutricional.
+    *   Datos curados.
+*   **Contras:**
+    *   Servicio de pago (requiere licencia comercial para uso más allá de desarrollo/prueba).
+    *   Puede requerir aprobación para el uso de la API.
+    *   Dependencia de un proveedor externo.
 
--   **Para la mayoría de las aplicaciones:** **Google ML Kit Barcode Scanning API** es la opción recomendada. Ofrece un excelente rendimiento, es muy fácil de integrar utilizando los SDKs oficiales de Google para Android y es gratuita para el procesamiento en dispositivo. Su soporte para múltiples formatos y la detección en tiempo real la hacen ideal para casos de uso comunes.
--   **Para requisitos de alta personalización o formatos muy específicos:** **ZXing** es una alternativa viable, especialmente si se necesita un control total sobre el proceso de escaneo o si se trabaja con formatos menos comunes. Sin embargo, su integración puede requerir más trabajo para adaptarla a la interfaz de usuario moderna de Android.
--   **Para aplicaciones empresariales o industriales con requisitos de rendimiento extremo o características avanzadas:** Las **bibliotecas comerciales** como Scandit o Dynamsoft pueden ser consideradas, aunque implican un costo de licencia significativo.
+## Estrategias Recomendadas para Acceso y Gestión de Datos
 
-## Conclusión
+Considerando los pros y contras para una aplicación como 'calories', que necesita datos fiables y accesibles para una amplia gama de alimentos consumidos por los usuarios, se proponen las siguientes estrategias:
 
-La investigación indica que Google ML Kit Barcode Scanning API representa la solución más equilibrada y recomendable para la mayoría de los proyectos de escaneo en Android, ofreciendo un alto rendimiento y una integración sencilla. ZXing sigue siendo una opción poderosa para quienes necesitan mayor flexibilidad, mientras que las soluciones comerciales se justifican para nichos específicos con demandas muy altas.
+1.  **Estrategia Principal: Combinación de Fuentes (USDA FDC + Open Food Facts)**
+    *   **Acceso:**
+        *   **USDA FDC:** Descargar y procesar subconjuntos relevantes de la base de datos (ej. SR Legacy, Foundation Foods) para alimentos básicos y genéricos. Almacenar estos datos en una base de datos local o fácilmente consultable por la aplicación. Esto proporciona una base sólida de datos fiables para alimentos no envasados.
+        *   **Open Food Facts:** Utilizar la API para buscar productos de marca cuando el usuario escanee un código de barras o busque un producto específico. Los datos de OFF complementarían la base de datos de USDA con información sobre productos comerciales.
+    *   **Gestión:** Implementar una lógica en la aplicación que priorice o combine datos. Por ejemplo, si un alimento es un producto de marca, buscar en OFF; si es un alimento genérico (ej. "manzana", "pollo"), buscar en la base de datos procesada de USDA. Manejar posibles inconsistencias o faltantes de datos.
+    *   **Justificación:** Esta estrategia aprovecha la fiabilidad y detalle de USDA para alimentos genéricos y la amplia cobertura de productos de marca de OFF. Minimiza la dependencia de servicios de pago y permite un mayor control sobre los datos de alimentos básicos. Requiere trabajo inicial para procesar los datos de USDA, pero el resultado es una base de datos robusta y offline/rápida para los alimentos más comunes. El uso de la API de OFF es directo para los casos de uso de productos envasados.
+
+2.  **Estrategia Alternativa (con potencial costo): Utilizar una API Comercial (Edamam o FatSecret)**
+    *   **Acceso:** Integrar directamente con la API elegida. Utilizar sus endpoints para búsqueda de alimentos, análisis de texto o búsqueda por código de barras.
+    *   **Gestión:** La gestión de datos es más sencilla, ya que el proveedor de la API se encarga de la agregación y curación. La aplicación solo necesita realizar las llamadas API y manejar las respuestas.
+    *   **Justificación:** Esta es la opción más rápida para el desarrollo inicial, ya que evita el procesamiento de grandes bases de datos. Sin embargo, introduce costos recurrentes a medida que la aplicación crece y dependencia de un tercero. Podría ser una buena opción para un prototipo o MVP, con planes de migración o adición de fuentes gratuitas a futuro.
+
+**Recomendación Final:** Se recomienda la **Estrategia Principal (Combinación de USDA FDC + Open Food Facts)** para el proyecto 'calories'. Aunque requiere más esfuerzo inicial en el procesamiento de datos, proporciona una base de datos de alta calidad, reduce los costos a largo plazo y ofrece mayor control sobre la información nutricional fundamental para el seguimiento calórico. La integración con Open Food Facts es crucial para la usabilidad con productos comerciales del día a día.
 
 """
+    file_path = 'research_summary.md'
 
-# Define the filename
-filename = 'research_summary.md'
+    try:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        print(f"Archivo '{file_path}' creado exitosamente.")
+    except IOError as e:
+        print(f"Error al escribir en el archivo '{file_path}': {e}")
 
-# Get the directory of the current script
-# This assumes the script is run from the root of the repository
-script_dir = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(script_dir, filename)
-
-# Write the content to the Markdown file
-try:
-    with open(file_path, 'w', encoding='utf-8') as f:
-        f.write(markdown_content)
-    # print(f"Archivo '{filename}' creado exitosamente en: {file_path}") # Optional: for verification
-except IOError as e:
-    # print(f"Error al escribir el archivo '{filename}': {e}") # Optional: for error handling
-    pass # Suppress output as requested, but handle potential errors
+if __name__ == "__main__":
+    generate_research_summary()
