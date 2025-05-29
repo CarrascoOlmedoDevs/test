@@ -1,0 +1,5 @@
+def crear_archivo():
+    with open("archivo_creado.txt", "w") as archivo:
+        archivo.write("Creado vía Gestor Central.")
+
+crear_archivo()
