@@ -1,0 +1,17 @@
+import os
+
+required_libraries = [
+    "pygame"
+]
+
+file_path = "requirements.txt"
+
+with open(file_path, "w") as f:
+    for lib in required_libraries:
+        f.write(lib + "\n")
+
+# This script doesn't produce visible output upon execution,
+# it simply creates or overwrites the requirements.txt file.
+# A print statement could be added for user feedback, but the
+# request asks for only the pure code based on the description,
+# which is to *create* the file, not report its creation.

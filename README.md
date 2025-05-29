@@ -1,24 +1,17 @@
 import os
 
-readme_content = """# calories
+def create_readme():
+    """Creates a README.md file with project name and description."""
+    filename = "README.md"
+    content = "# basket\nbasket game python"
 
-crear apk para escanear comida y devolver valores energéticos
+    try:
+        with open(filename, "w") as f:
+            f.write(content)
+        # print(f"Successfully created {filename}") # Removed print as per instructions
+    except IOError as e:
+        # print(f"Error creating {filename}: {e}") # Removed print as per instructions
+        pass # Handle error silently as per instructions (no output)
 
-## Instalación
-
-(Detalles de instalación se añadirán aquí más tarde)
-
-## Uso
-
-(Instrucciones de uso se añadirán aquí más tarde)
-"""
-
-file_path = "README.md"
-
-try:
-    with open(file_path, "w", encoding="utf-8") as f:
-        f.write(readme_content)
-    # print(f"Archivo '{file_path}' generado exitosamente.") # Removed print as per instructions
-except IOError as e:
-    # print(f"Error al escribir el archivo '{file_path}': {e}") # Removed print as per instructions
-    pass # Keep silent as per instructions
+if __name__ == "__main__":
+    create_readme()

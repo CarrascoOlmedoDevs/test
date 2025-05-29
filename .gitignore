@@ -1,160 +1,83 @@
 import os
 
 gitignore_content = """
-# Built application files
-*.apk
-*.ap_
+# Byte-compiled / optimized files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 
-# Files for the ART/Dalvik VM
-*.dex
+# C extensions
+*.so
 
-# Java class files
-*.class
-
-# Generated files
-gen/
-out/
-
-# Gradle files
-.gradle/
+# Distribution / packaging
+.Python
 build/
+dist/
+*.egg-info/
+*.eggs
 
-# Local configuration file (sdk path, etc)
-local.properties
+# Installer logs
+pip-log.txt
+pip-delete-this-virtualenv.txt
 
-# AVD/emulator files
-.android/avd/
+# Virtual environment
+.venv/
+venv/
+env/
+.env/
+.direnv/
 
-# Android Studio files
-.idea/workspace.xml
-.idea/libraries/
-.idea/modules.xml
-.idea/navEditor.xml
-.idea/assetWizardSettings.xml
-.idea/gradle.xml
-.idea/tasks.xml
-.idea/vcs.xml
-.idea/dictionaries
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+*.orig
 
-# Mac specific files
-.DS_Store
-# Windows specific files
-Thumbs.db
+# MyPy cache
+.mypy_cache/
 
-# Crashlytics files
-crashlytics-build.properties
+# pytest cache
+.pytest_cache/
 
-# Keystore files
-*.keystore
+# Sphinx documentation
+docs/_build/
 
-# External native build files
-.externalNativeBuild/
+# PyInstaller
+*.spec
 
-# Kotlin stubs
-*.klib
+# Jupyter Notebook
+.ipynb_checkpoints/
 
-# Room schema files
-*.json
+# Logs and databases
+logs/
+*.log
+*.sqlite3
+*.db
 
-# Gradle wrapper
-!gradlew
-!gradlew.bat
-.gradle-wrapper
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
 
-# Git LFS files
-*.lfs
+# Misc
+instance/ # For Flask
 
-# Android Studio build configuration
-.idea/compiler.xml
-
-# Android Studio local build configuration
-.idea/runConfigurations.xml
-
-# Android Studio caches
-.idea/caches/
-
-# Android Studio generated files
-.idea/generated/
-
-# Android Studio test results
-.idea/testResults/
-
-# Android Studio UI designer files
-.idea/uiDesigner.xml
-
-# Android Studio local history
-.idea/shelf/
-
-# Android Studio inspection profiles
-.idea/inspectionProfiles/
-
-# Android Studio copyright profiles
-.idea/copyright/
-
-# Android Studio code style profiles
-.idea/codeStyles/
-
-# Android Studio external libraries
-.idea/libraries/
-
-# Android Studio user dictionaries
-.idea/dictionaries/
-
-# Android Studio task files
-.idea/tasks.xml
-
-# Android Studio vcs configuration
-.idea/vcs.xml
-
-# Android Studio gradle configuration
-.idea/gradle.xml
-
-# Android Studio asset wizard settings
-.idea/assetWizardSettings.xml
-
-# Android Studio navigation editor settings
-.idea/navEditor.xml
-
-# Android Studio gitignore
-.idea/gitignore
-
-# Android Studio build configuration (Kotlin)
-.idea/kotlinc.xml
-
-# Android Studio external annotations
-.idea/external_annotations.xml
-
-# Android Studio data sources
-.idea/dataSources/
-
-# Android Studio deployment configurations
-.idea/deploymentTargetDropDown.xml
-
-# Android Studio device manager configurations
-.idea/device_manager_settings.xml
-
-# Android Studio profiler settings
-.idea/profiler/
-
-# Android Studio template data
-.idea/templateData/
-
-# Android Studio version control history
-.idea/workspace.xml
-
-# Android Studio build-specific files
-captures/
+# Project specific
+# .env # uncomment and add to ignore if you have a .env file for secrets
 """
 
-def generate_android_gitignore():
-    """Generates a standard .gitignore file for an Android project."""
-    file_path = ".gitignore"
-    try:
-        with open(file_path, "w") as f:
-            f.write(gitignore_content)
-        print(f"Generated standard Android .gitignore file at {file_path}")
-    except IOError as e:
-        print(f"Error writing .gitignore file: {e}")
+gitignore_filename = ".gitignore"
 
-if __name__ == "__main__":
-    generate_android_gitignore()
+try:
+    with open(gitignore_filename, "w") as f:
+        f.write(gitignore_content.strip())
+    # print(f"Created '{gitignore_filename}' successfully.") # Optional: for user feedback
+except IOError as e:
+    # print(f"Error writing to file {gitignore_filename}: {e}") # Optional: for error feedback
+    pass # Suppress output as requested, but good practice to handle errors
