@@ -1,141 +1,144 @@
 import os
 
-def generate_step_counting_report():
-    """
-    Generates a Markdown report summarizing Android step counting methods.
+# Define the content for the Markdown file
 
-    Returns:
-        str: The Markdown formatted report.
-    """
-    report_title = "# Informe sobre Métodos de Conteo de Pasos en Android\n\n"
-    introduction = "Este informe resume los hallazgos de la investigación sobre diferentes métodos para contar pasos en dispositivos Android, comparando sus características y ofreciendo una recomendación.\n\n"
+introduction = """
+Este documento resume la investigación realizada para identificar fuentes de datos nutricionales adecuadas para el proyecto 'calories'. El objetivo es encontrar fuentes fiables, accesibles y con buena cobertura para obtener información detallada sobre la composición nutricional de diversos alimentos y productos.
+"""
 
-    methods_data = {
-        "Acelerómetro Nativo (Manual Implementation)": {
-            "description": "Implementación manual de un algoritmo de detección de pasos utilizando datos crudos del sensor acelerómetro del dispositivo.",
-            "pros": [
-                "Control total sobre el algoritmo.",
-                "No requiere dependencias externas (fuera de los sensores del sistema)."
-            ],
-            "cons": [
-                "Alta complejidad de implementación (requiere desarrollar o integrar un algoritmo robusto).",
-                "Precisión variable, depende mucho de la calidad del algoritmo y la calibración.",
-                "Consumo de energía potencialmente alto si no se maneja correctamente (uso constante del sensor).",
-                "Sensible a falsos positivos (movimientos no relacionados con caminar)."
-            ],
-            "complexity": "Alta",
-            "energy": "Potencialmente Alta",
-            "precision": "Variable (depende del algoritmo)",
-            "permissions": "android.permission.ACTIVITY_RECOGNITION (para versiones recientes de Android, aunque a veces se puede evitar si solo se usa el sensor sin intención de reconocer actividad)."
-        },
-        "Google Fit API - History API": {
-            "description": "Utiliza datos agregados de actividad física (incluido el conteo de pasos) que Google Fit ya ha recolectado en el dispositivo.",
-            "pros": [
-                "Muy eficiente energéticamente (Google Fit maneja la recolección en segundo plano).",
-                "Relativamente sencilla de implementar para obtener datos históricos.",
-                "Precisión generalmente buena, ya que se basa en la infraestructura optimizada de Google Fit.",
-                "Acceso a datos históricos (pasos contados previamente por Google Fit)."
-            ],
-            "cons": [
-                "Dependencia de la aplicación Google Fit instalada y configurada en el dispositivo.",
-                "Los datos pueden no estar disponibles en tiempo real (hay un pequeño retraso en la agregación).",
-                "Requiere autenticación con la cuenta de Google del usuario.",
-                "Puede haber discrepancias si el usuario usa múltiples dispositivos o si Google Fit no está activo."
-            ],
-            "complexity": "Media",
-            "energy": "Baja (delega a Google Fit)",
-            "precision": "Buena (gestionada por Google Fit)",
-            "permissions": "Com.google.android.gms.permission.ACTIVITY_RECOGNITION (obtenido a través de la integración con Google Fit), requiere consentimiento del usuario para acceder a los datos de actividad física."
-        },
-        "Google Fit API - Recording API": {
-            "description": "Permite a la aplicación registrar la intención de recibir datos de actividad física (como pasos) de Google Fit de forma continua en segundo plano.",
-            "pros": [
-                "Eficiente energéticamente (Google Fit gestiona la recolección).",
-                "Permite a la aplicación recibir actualizaciones continuas de pasos sin mantener el sensor activo directamente.",
-                "Menos susceptible a ser 'matada' por el sistema operativo que un servicio propio usando sensores directos."
-            ],
-            "cons": [
-                "Dependencia de Google Fit.",
-                "Requiere autenticación.",
-                "Los datos se entregan a Google Fit primero y luego a tu aplicación, no es tiempo real estricto.",
-                "Requiere que la aplicación se registre para tipos de datos específicos."
-            ],
-            "complexity": "Media",
-            "energy": "Baja (delega a Google Fit)",
-            "precision": "Buena (gestionada por Google Fit)",
-            "permissions": "Com.google.android.gms.permission.ACTIVITY_RECOGNITION, consentimiento del usuario."
-        },
-        "Google Fit API - Sensors API": {
-            "description": "Permite a la aplicación acceder a los datos de los sensores de actividad física (incluido el sensor de conteo de pasos hardware si está disponible) a través de Google Fit.",
-            "pros": [
-                "Acceso a datos casi en tiempo real del sensor de pasos (si existe hardware dedicado).",
-                "Utiliza el sensor de conteo de pasos del hardware (TYPE_STEP_COUNTER) que es muy eficiente energéticamente.",
-                "Google Fit maneja parte de la complejidad de interactuar con los sensores del sistema."
-            ],
-            "cons": [
-                "Dependencia de Google Fit.",
-                "Requiere autenticación.",
-                "La disponibilidad del sensor de conteo de pasos hardware varía entre dispositivos.",
-                "Requiere manejar el flujo de datos del sensor directamente (aunque facilitado por Google Fit)."
-            ],
-            "complexity": "Media a Baja (si el sensor hardware está disponible)",
-            "energy": "Muy Baja (si usa TYPE_STEP_COUNTER hardware)",
-            "precision": "Alta (si usa TYPE_STEP_COUNTER hardware)",
-            "permissions": "Com.google.android.gms.permission.ACTIVITY_RECOGNITION, consentimiento del usuario."
-        }
+data_sources = [
+    {
+        'name': 'Open Food Facts',
+        'description': 'Base de datos colaborativa sobre productos alimenticios con información nutricional.',
+        'type': 'Base de datos, Pública',
+        'cost': 'Gratis',
+        'format': 'JSON, CSV',
+        'coverage': 'Productos alimenticios de todo el mundo, incluyendo escaneo de códigos de barras.',
+        'pros': [
+            'Gran cantidad de datos aportados por la comunidad.',
+            'API pública y fácil de usar.',
+            'Cobertura internacional.',
+            'Datos abiertos y gratuitos.'
+        ],
+        'cons': [
+            'Calidad de datos variable debido a la entrada manual.',
+            'Puede faltar información detallada para algunos productos.',
+            'La estructura de datos puede ser inconsistente.'
+        ],
+        'links': [
+            'https://world.openfoodfacts.org/',
+            'https://wiki.openfoodfacts.org/API'
+        ]
+    },
+    {
+        'name': 'USDA FoodData Central',
+        'description': 'Base de datos completa del Departamento de Agricultura de EE. UU. con información nutricional detallada.',
+        'type': 'Base de datos, Pública',
+        'cost': 'Gratis',
+        'format': 'JSON, CSV, XML',
+        'coverage': 'Alimentos básicos, productos de marca, datos de investigación y suplementos, principalmente de EE. UU.',
+        'pros': [
+            'Datos muy fiables y científicamente validados.',
+            'Información nutricional detallada (hasta 150 nutrientes).',
+            'Varias categorías de datos (SR Legacy, Foundation, FNDDS, Branded Foods, Survey).',
+            'API disponible.'
+        ],
+        'cons': [
+            'Principalmente enfocado en productos de EE. UU.',
+            'La estructura de la base de datos puede ser compleja de entender inicialmente.',
+            'Menos cobertura de productos de marca internacionales.'
+        ],
+        'links': [
+            'https://fdc.nal.usda.gov/',
+            'https://fdc.nal.usda.gov/api-guide.html'
+        ]
+    },
+    {
+        'name': 'Edamam Nutrition Analysis API',
+        'description': 'API que permite analizar el contenido nutricional de recetas e ingredientes.',
+        'type': 'API, Privada (con plan gratuito)',
+        'cost': 'Plan gratuito limitado, suscripción de pago para mayor uso.',
+        'format': 'JSON',
+        'coverage': 'Ingredientes y recetas de todo el mundo.',
+        'pros': [
+            'Ideal para analizar recetas y texto libre de ingredientes.',
+            'API bien documentada y fácil de integrar.',
+            'Datos de alta calidad para ingredientes comunes.'
+        ],
+        'cons': [
+            'El plan gratuito es muy limitado en número de peticiones.',
+            'El costo de la suscripción puede ser elevado para proyectos grandes.',
+            'Menos enfocado en productos específicos con código de barras.'
+        ],
+        'links': [
+            'https://developer.edamam.com/nutrition-details-api',
+            'https://developer.edamam.com/pricing'
+        ]
     }
+]
 
-    report_content = report_title + introduction
+conclusion = """
+Considerando los requisitos del proyecto 'calories', que probablemente necesite identificar productos específicos (quizás por código de barras) y tener una amplia cobertura internacional, **Open Food Facts** parece ser la fuente más adecuada como punto de partida. Su naturaleza colaborativa y su enfoque en productos de marca con códigos de barras la hacen ideal para una aplicación orientada al consumidor.
 
-    report_content += "## Métodos Investigados\n\n"
+Aunque la calidad de los datos puede variar, la gran cantidad de productos disponibles y la API gratuita compensan esta limitación inicial.
 
-    for method, details in methods_data.items():
-        report_content += f"### {method}\n\n"
-        report_content += f"**Descripción:** {details['description']}\n\n"
-        report_content += "**Pros:**\n"
-        for pro in details["pros"]:
-            report_content += f"- {pro}\n"
-        report_content += "\n"
-        report_content += "**Contras:**\n"
-        for con in details["cons"]:
-            report_content += f"- {con}\n"
-        report_content += "\n"
-        report_content += f"**Complejidad de Implementación:** {details['complexity']}\n"
-        report_content += f"**Eficiencia Energética:** {details['energy']}\n"
-        report_content += f"**Precisión:** {details['precision']}\n"
-        report_content += f"**Permisos Necesarios:** {details['permissions']}\n\n"
-        report_content += "---\n\n" # Separator
+Para obtener datos nutricionales más detallados y fiables sobre ingredientes básicos y alimentos genéricos, **USDA FoodData Central** es una excelente fuente complementaria, especialmente si el proyecto tiene un enfoque significativo en alimentos consumidos en EE. UU.
 
-    report_content += "## Comparación\n\n"
-    report_content += "| Característica          | Acelerómetro Nativo | Google Fit - History | Google Fit - Recording | Google Fit - Sensors |\n"
-    report_content += "|-------------------------|---------------------|----------------------|------------------------|----------------------|\n"
-    for characteristic in ["Complejidad de Implementación", "Eficiencia Energética", "Precisión", "Permisos Necesarios"]:
-         report_content += f"| {characteristic} | {methods_data['Acelerómetro Nativo (Manual Implementation)'][characteristic.split(' ')[0].lower() if characteristic != 'Permisos Necesarios' else 'permissions']} | {methods_data['Google Fit API - History API'][characteristic.split(' ')[0].lower() if characteristic != 'Permisos Necesarios' else 'permissions']} | {methods_data['Google Fit API - Recording API'][characteristic.split(' ')[0].lower() if characteristic != 'Permisos Necesarios' else 'permissions']} | {methods_data['Google Fit API - Sensors API'][characteristic.split(' ')[0].lower() if characteristic != 'Permisos Necesarios' else 'permissions']} |\n"
+**Edamam** es muy útil para el análisis de recetas o texto libre de ingredientes, pero su modelo de costos basado en suscripción puede ser una barrera para un proyecto con un presupuesto limitado o un gran número de usuarios.
 
-    report_content += "\n"
+Por lo tanto, la recomendación inicial es integrar **Open Food Facts** como fuente principal de datos de productos y considerar **USDA FoodData Central** para datos de ingredientes básicos o como fuente secundaria si se necesita mayor fiabilidad científica en ciertos casos.
+"""
 
-    report_content += "## Recomendación\n\n"
-    report_content += "Para la mayoría de las aplicaciones de conteo de pasos en Android, el enfoque **Google Fit API** es generalmente el más recomendado, específicamente utilizando una combinación de **Sensors API** y **History API**.\n\n"
-    report_content += "**Justificación:**\n"
-    report_content += "- **Eficiencia Energética:** Utilizar la infraestructura de Google Fit, especialmente el acceso al sensor de conteo de pasos hardware (TYPE_STEP_COUNTER) a través de la Sensors API, es significativamente más eficiente en términos de batería que procesar datos crudos del acelerómetro manualmente.\n"
-    report_content += "- **Precisión:** Google Fit utiliza algoritmos optimizados y puede acceder a sensores de hardware dedicados, lo que generalmente resulta en un conteo de pasos más preciso y menos propenso a falsos positivos que una implementación manual simple.\n"
-    report_content += "- **Complejidad de Implementación:** Aunque requiere integrar la API de Google Fit y manejar la autenticación, es menos complejo que desarrollar y mantener un algoritmo de detección de pasos robusto desde cero.\n"
-    report_content += "- **Datos Históricos:** La History API permite acceder fácilmente a los pasos contados por Google Fit incluso cuando la aplicación no estaba activa, proporcionando una experiencia de usuario más completa.\n\n"
-    report_content += "La **Sensors API** es ideal para obtener actualizaciones en tiempo real (o casi real) cuando la aplicación está en primer plano o necesita monitoreo activo. La **History API** es crucial para mostrar resúmenes diarios, semanales, etc., y para recuperar datos si la aplicación se cerró.\n\n"
-    report_content += "La implementación manual del acelerómetro solo se consideraría en casos muy específicos donde la dependencia de Google Fit es inaceptable o se requiere un control extremadamente granular sobre el procesamiento del sensor, asumiendo la inversión significativa en desarrollo y pruebas necesarias para lograr precisión y eficiencia aceptables.\n\n"
+# Build the Markdown content
 
-    return report_content
+markdown_content = "# Resumen de Investigación: Fuentes de Datos Nutricionales\n\n"
 
-if __name__ == "__main__":
-    report_markdown = generate_step_counting_report()
+markdown_content += "## Introducción\n"
+markdown_content += introduction.strip() + "\n\n"
 
-    # Specify the output file name
-    output_filename = "informe_conteo_pasos_android.md"
+markdown_content += "## Fuentes de Datos Identificadas\n\n"
 
-    # Save the report to a Markdown file
-    try:
-        with open(output_filename, "w", encoding="utf-8") as f:
-            f.write(report_markdown)
-        print(f"Informe generado exitosamente en '{output_filename}'")
-    except IOError as e:
-        print(f"Error al escribir el archivo '{output_filename}': {e}")
+for source in data_sources:
+    markdown_content += f"### {source['name']}\n"
+    markdown_content += f"- **Descripción:** {source['description']}\n"
+    markdown_content += f"- **Tipo:** {source['type']}\n"
+    markdown_content += f"- **Costo:** {source['cost']}\n"
+    markdown_content += f"- **Formato de Datos:** {source['format']}\n"
+    markdown_content += f"- **Cobertura:** {source['coverage']}\n"
+
+    markdown_content += "- **Pros:**\n"
+    if source['pros']:
+        for pro in source['pros']:
+            markdown_content += f"    - {pro}\n"
+    else:
+        markdown_content += "    - N/A\n"
+
+    markdown_content += "- **Contras:**\n"
+    if source['cons']:
+        for con in source['cons']:
+            markdown_content += f"    - {con}\n"
+    else:
+        markdown_content += "    - N/A\n"
+
+    markdown_content += "- **Enlaces Relevantes:**\n"
+    if source['links']:
+        for link in source['links']:
+            markdown_content += f"    - <{link}>\n" # Markdown auto-links URLs in angle brackets
+    else:
+        markdown_content += "    - N/A\n"
+    markdown_content += "\n" # Add a blank line between sources
+
+markdown_content += "## Conclusiones y Recomendaciones\n"
+markdown_content += conclusion.strip() + "\n"
+
+# Write the content to the Markdown file
+
+file_name = "research_summary.md"
+
+try:
+    with open(file_name, "w", encoding="utf-8") as f:
+        f.write(markdown_content)
+    # print(f"Archivo '{file_name}' creado exitosamente.") # Removed print as per instructions
+except IOError as e:
+    # print(f"Error al escribir el archivo '{file_name}': {e}") # Removed print as per instructions
+    pass # Handle error silently as per instructions (no output)
